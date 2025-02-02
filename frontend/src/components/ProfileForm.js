@@ -1,9 +1,9 @@
 // src/components/ProfileForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { TextField, Button, Card, CardContent, Typography, Box } from '@mui/material';
 
 const ProfileForm = () => {
-  // Initialize state for the profile
   const [profile, setProfile] = useState({
     name: '',
     company: '',
@@ -12,7 +12,6 @@ const ProfileForm = () => {
     growthStage: ''
   });
 
-  // Handle form field changes
   const handleChange = (e) => {
     setProfile({
       ...profile,
@@ -20,13 +19,11 @@ const ProfileForm = () => {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post('/api/users/create', profile);
       alert('Profile Created Successfully!');
-      // Optionally reset the form:
       setProfile({
         name: '',
         company: '',
@@ -41,56 +38,74 @@ const ProfileForm = () => {
   };
 
   return (
-    <div>
-      <h2>Create Your Profile</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={profile.name}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          type="text"
-          name="company"
-          placeholder="Company Name"
-          value={profile.company}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          type="text"
-          name="sector"
-          placeholder="Sector"
-          value={profile.sector}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          type="number"
-          name="fundingNeeds"
-          placeholder="Funding Needs"
-          value={profile.fundingNeeds}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          type="text"
-          name="growthStage"
-          placeholder="Growth Stage"
-          value={profile.growthStage}
-          onChange={handleChange}
-        />
-        <br />
-        <button type="submit">Create Profile</button>
-      </form>
-    </div>
+    <Card 
+      sx={{ 
+        maxWidth: 500, 
+        margin: '20px auto', 
+        padding: 2,
+        backgroundColor: 'grey.100',
+        borderRadius: 2,
+        boxShadow: 2,
+      }}
+    >
+      <CardContent>
+        <Typography variant="h5" gutterBottom align="center">
+          Create Your Profile
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <TextField
+            fullWidth
+            margin="normal"
+            name="name"
+            label="Name"
+            value={profile.name}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            name="company"
+            label="Company Name"
+            value={profile.company}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            name="sector"
+            label="Sector"
+            value={profile.sector}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            name="fundingNeeds"
+            label="Funding Needs"
+            type="number"
+            value={profile.fundingNeeds}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            name="growthStage"
+            label="Growth Stage"
+            value={profile.growthStage}
+            onChange={handleChange}
+          />
+          <Box textAlign="center" sx={{ marginTop: 2 }}>
+            <Button type="submit" variant="contained" color="primary">
+              Create Profile
+            </Button>
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
 

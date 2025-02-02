@@ -13,6 +13,10 @@ frontend/src/services
 test
 
 Files:
+=== File: ./README.md ===
+# fundScopeAIApp
+=== End of file: ./README.md ===
+
 === File: ./listOfFiles.txt ===
 
 === End of file: ./listOfFiles.txt ===
