@@ -4,19 +4,26 @@ import json
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
-# Use CUDA if available, else CPU.
-device = "cuda" if torch.cuda.is_available() else "cpu"
+# Determine the device: prefer MPS on macOS (Apple Silicon), then CUDA, then CPU.
+if torch.backends.mps.is_available():
+    device = "mps"
+elif torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
+
+print("Using device:", device)
 
 def load_model():
-    # Using Meta's LLaMA-2-7B-chat model from Hugging Face.
-    model_name = "meta-llama/Llama-2-7b-chat-hf"  # Ensure you have access
+    model_name = "meta-llama/Llama-2-7b-chat-hf"  # Use the 7B-chat model (which is more feasible than a 70B model on an M2)
     print("Loading tokenizer...", flush=True)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=True)
     print("Loading model...", flush=True)
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
-        # If required, you might add: use_auth_token=True
+        # Use float16 for both cuda and mps if available; adjust as needed if you experience issues.
+        torch_dtype=torch.float16 if device in ["cuda", "mps"] else torch.float32,
+        use_auth_token=True
     )
     model.to(device)
     return tokenizer, model
