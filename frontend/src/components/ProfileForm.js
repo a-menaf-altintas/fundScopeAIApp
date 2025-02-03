@@ -10,9 +10,6 @@ import {
 } from '@mui/material';
 
 const ProfileForm = () => {
-  /**
-   * Store the fields for the user profile in local state.
-   */
   const [profile, setProfile] = useState({
     name: '',
     company: '',
@@ -21,10 +18,6 @@ const ProfileForm = () => {
     growthStage: ''
   });
 
-  /**
-   * CHANGED: The handleChange function remains straightforward:
-   * We update the relevant field in our profile object.
-   */
   const handleChange = (e) => {
     setProfile({
       ...profile,
@@ -32,9 +25,6 @@ const ProfileForm = () => {
     });
   };
 
-  /**
-   * CHANGED: On form submit, post to /api/users/create and show an alert.
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -53,23 +43,23 @@ const ProfileForm = () => {
     }
   };
 
-  /**
-   * CHANGED: Updated the styling to match the card-based approach,
-   * with subtle boxShadow, borderRadius, and spacing.
-   */
   return (
     <Card
-      style={{
+      sx={{
         maxWidth: 500,
-        margin: '32px auto',
-        padding: 16,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        borderRadius: 8
+        mx: 'auto',
+        mt: 4,
+        boxShadow: 3,
+        borderRadius: 2,
+        p: 2
       }}
     >
       <CardContent>
-        <Typography variant="h5" align="center" style={{ fontWeight: 'bold', marginBottom: 16 }}>
+        <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', mb: 1 }}>
           Create Your Profile
+        </Typography>
+        <Typography variant="body2" align="center" sx={{ mb: 2 }}>
+          Fill in your details to help us tailor funding opportunities for you.
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} noValidate>
@@ -78,6 +68,7 @@ const ProfileForm = () => {
             margin="normal"
             name="name"
             label="Name"
+            placeholder="John Doe"
             value={profile.name}
             onChange={handleChange}
             required
@@ -87,6 +78,7 @@ const ProfileForm = () => {
             margin="normal"
             name="company"
             label="Company Name"
+            placeholder="ABC Innovations"
             value={profile.company}
             onChange={handleChange}
             required
@@ -96,6 +88,7 @@ const ProfileForm = () => {
             margin="normal"
             name="sector"
             label="Sector"
+            placeholder="Fintech, Biotech, etc."
             value={profile.sector}
             onChange={handleChange}
             required
@@ -106,6 +99,7 @@ const ProfileForm = () => {
             name="fundingNeeds"
             label="Funding Needs"
             type="number"
+            placeholder="500000"
             value={profile.fundingNeeds}
             onChange={handleChange}
             required
@@ -115,11 +109,12 @@ const ProfileForm = () => {
             margin="normal"
             name="growthStage"
             label="Growth Stage"
+            placeholder="Pre-Seed, Seed, Series A..."
             value={profile.growthStage}
             onChange={handleChange}
           />
 
-          <Box style={{ textAlign: 'center', marginTop: 16 }}>
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Button type="submit" variant="contained" color="primary">
               Create Profile
             </Button>

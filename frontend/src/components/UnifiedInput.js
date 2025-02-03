@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-/** CHANGED: Imported Tooltip to show explanations on hover */
 import {
   TextField,
   Button,
@@ -10,34 +9,26 @@ import {
   IconButton,
   Box,
   CircularProgress,
-  Tooltip
+  Tooltip,
+  Fade
 } from '@mui/material';
 
 import MicIcon from '@mui/icons-material/Mic';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist/legacy/build/pdf';
 
-/**
- * PDF worker path configuration remains the same as before.
- * This line ensures PDF processing can happen in the browser.
- */
+// PDF Worker Setup
 GlobalWorkerOptions.workerSrc = `${window.location.origin}/pdf.worker.min.js`;
 
 const UnifiedInput = () => {
-  // States remain mostly unchanged
   const [inputText, setInputText] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isListening, setIsListening] = useState(false);
-
-  // Reference for the speech recognition instance
   const recognitionRef = useRef(null);
 
-  /**
-   * CHANGED: The startListening and stopListening functions remain logically
-   * the same, but we’ll label them with comments to clarify.
-   */
+  // Voice input logic
   const startListening = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -53,15 +44,12 @@ const UnifiedInput = () => {
       const transcript = event.results[0][0].transcript;
       setInputText(prev => prev + " " + transcript);
     };
-
     recognition.onerror = (event) => {
       console.error("Speech recognition error:", event.error);
     };
-
     recognition.onend = () => {
       setIsListening(false);
     };
-
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
@@ -74,14 +62,10 @@ const UnifiedInput = () => {
     }
   };
 
-  /**
-   * CHANGED: The file reading logic is unchanged except for minor
-   * clarifications in comments. We still handle PDF and text files.
-   */
+  // Handle file input (PDF or plain text)
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     if (file.type === "application/pdf") {
       const fileReader = new FileReader();
       fileReader.onload = function () {
@@ -121,10 +105,7 @@ const UnifiedInput = () => {
     }
   };
 
-  /**
-   * CHANGED: The handleSubmit function logic remains the same.
-   * We just ensure that after receiving a response we update `result`.
-   */
+  // Submit logic
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -145,47 +126,50 @@ const UnifiedInput = () => {
     setLoading(false);
   };
 
-  /**
-   * CHANGED: The Card now has more styling (boxShadow, borderRadius, etc.).
-   * A bolded title, spacing between elements, and Tooltips for the mic and file attach icons.
-   * The recommendation box is given a subtle background color from the theme ('grey.100').
-   */
   return (
     <Card
-      style={{
-        maxWidth: 600,
-        margin: '32px auto',          // More space around
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        borderRadius: 8,
-        backgroundColor: 'white'      // Uses the paper color from the theme or fallback white
+      sx={{
+        boxShadow: 3,
+        borderRadius: 2,
+        overflow: 'hidden' // ensures the header background color covers full width
       }}
     >
-      <CardContent>
-        <Typography variant="h5" align="center" style={{ fontWeight: 'bold', marginBottom: 16 }}>
+      {/** Distinct header area with light background */}
+      <Box sx={{ backgroundColor: '#f2f2f2', p: 2 }}>
+        <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', mb: 1 }}>
           Find Funding Options
         </Typography>
+        <Typography variant="body2" align="center">
+          {/* Subheading / Tagline */}
+          Enter details about your company, or attach a file to let FundScope AI recommend funding options.
+        </Typography>
+      </Box>
 
+      <CardContent>
+        {/* 
+          Provide a quick example or helper text for the user:
+          e.g. "We are a fintech startup seeking $500k..."
+        */}
         <form onSubmit={handleSubmit}>
           <TextField
-            label="Enter company profile or load file/voice input"
-            placeholder="Enter your company details or funding requirements here..."
+            label="Company Profile / Funding Requirements"
+            placeholder="E.g. We are a fintech startup seeking $500k in seed funding..."
             multiline
             fullWidth
-            rows={6}
+            rows={5}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            style={{ marginBottom: 16 }}
+            helperText="Provide a brief description of your company, funding needs, and any relevant info."
+            sx={{ mt: 2, mb: 2 }}
           />
-          
-          <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
-            {/** CHANGED: Wrapped mic IconButton in a Tooltip for clarity. */}
+
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Tooltip title={isListening ? "Stop Listening" : "Start Voice Input"} arrow>
               <IconButton onClick={isListening ? stopListening : startListening} color="primary">
                 <MicIcon color={isListening ? "secondary" : "inherit"} />
               </IconButton>
             </Tooltip>
 
-            {/** CHANGED: Wrapped file attach Button in a Tooltip. */}
             <Tooltip title="Attach a text or PDF file" arrow>
               <Button variant="outlined" component="label" startIcon={<AttachFileIcon />}>
                 Attach File
@@ -209,29 +193,54 @@ const UnifiedInput = () => {
           </Box>
         </form>
 
+        {/* Error message if any */}
         {errorMsg && (
-          <Typography color="error" style={{ marginTop: 16, textAlign: 'center' }}>
+          <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>
             {errorMsg}
           </Typography>
         )}
 
-        {result && (
+        {/* Animate the result panel with a Fade */}
+        <Fade in={Boolean(result)}>
           <Box
-            style={{
-              marginTop: 24,
-              padding: 16,
-              backgroundColor: '#f2f2f2',  // A subtle gray background
-              borderRadius: 4
+            sx={{
+              mt: 3,
+              p: 2,
+              bgcolor: '#e8f4fa',
+              borderRadius: 2,
+              boxShadow: 1,
+              display: result ? 'block' : 'none'
             }}
           >
-            <Typography variant="subtitle1" align="center" style={{ fontWeight: 600 }}>
+            <Typography variant="subtitle1" align="center" sx={{ fontWeight: 600 }}>
               Recommendation:
             </Typography>
-            <Typography variant="body1" style={{ whiteSpace: 'pre-wrap', marginTop: 8 }}>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mt: 1 }}>
               {result}
             </Typography>
           </Box>
-        )}
+        </Fade>
+
+        {/* 
+          Mini step-by-step / FAQ 
+          Helps user understand quickly how to use the tool 
+        */}
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            How it Works
+          </Typography>
+          <ol style={{ marginLeft: '1rem' }}>
+            <li>
+              Provide a quick description in the text box or upload your company profile (PDF or text).
+            </li>
+            <li>
+              Optionally use the <strong>microphone</strong> to dictate your details (Chrome only).
+            </li>
+            <li>
+              Click <strong>Submit</strong> to get AI-generated funding recommendations.
+            </li>
+          </ol>
+        </Box>
       </CardContent>
     </Card>
   );
