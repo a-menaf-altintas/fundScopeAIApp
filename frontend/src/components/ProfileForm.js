@@ -1,9 +1,18 @@
-// src/components/ProfileForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { TextField, Button, Card, CardContent, Typography, Box } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Box
+} from '@mui/material';
 
 const ProfileForm = () => {
+  /**
+   * Store the fields for the user profile in local state.
+   */
   const [profile, setProfile] = useState({
     name: '',
     company: '',
@@ -12,6 +21,10 @@ const ProfileForm = () => {
     growthStage: ''
   });
 
+  /**
+   * CHANGED: The handleChange function remains straightforward:
+   * We update the relevant field in our profile object.
+   */
   const handleChange = (e) => {
     setProfile({
       ...profile,
@@ -19,6 +32,9 @@ const ProfileForm = () => {
     });
   };
 
+  /**
+   * CHANGED: On form submit, post to /api/users/create and show an alert.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -37,21 +53,25 @@ const ProfileForm = () => {
     }
   };
 
+  /**
+   * CHANGED: Updated the styling to match the card-based approach,
+   * with subtle boxShadow, borderRadius, and spacing.
+   */
   return (
-    <Card 
-      sx={{ 
-        maxWidth: 500, 
-        margin: '20px auto', 
-        padding: 2,
-        backgroundColor: 'grey.100',
-        borderRadius: 2,
-        boxShadow: 2,
+    <Card
+      style={{
+        maxWidth: 500,
+        margin: '32px auto',
+        padding: 16,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        borderRadius: 8
       }}
     >
       <CardContent>
-        <Typography variant="h5" gutterBottom align="center">
+        <Typography variant="h5" align="center" style={{ fontWeight: 'bold', marginBottom: 16 }}>
           Create Your Profile
         </Typography>
+
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <TextField
             fullWidth
@@ -98,7 +118,8 @@ const ProfileForm = () => {
             value={profile.growthStage}
             onChange={handleChange}
           />
-          <Box textAlign="center" sx={{ marginTop: 2 }}>
+
+          <Box style={{ textAlign: 'center', marginTop: 16 }}>
             <Button type="submit" variant="contained" color="primary">
               Create Profile
             </Button>
