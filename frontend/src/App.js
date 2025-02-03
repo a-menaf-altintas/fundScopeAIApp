@@ -1,7 +1,6 @@
-// src/App.js
+// frontend/src/App.js
 import React from 'react';
-import ProfileForm from './components/ProfileForm';
-import Dashboard from './components/Dashboard';
+import UnifiedInput from './components/UnifiedInput';
 import { Container, Typography, Box } from '@mui/material';
 
 function App() {
@@ -12,9 +11,7 @@ function App() {
           FundScope AI
         </Typography>
       </Box>
-      <ProfileForm />
-      <hr />
-      <Dashboard />
+      <UnifiedInput />
     </Container>
   );
 }
